@@ -12,37 +12,27 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Modification by pdelgado, 21 - 06 - 2021
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ==============================================================================
 
-"""Converts Cityscapes data to TFRecord file format with Example protos.
-The Cityscapes dataset is expected to have the following directory structure:
-  + cityscapes
-     - build_cityscapes_data.py (current working directiory).
-     - build_data.py
-     + cityscapesscripts
-       + annotation
-       + evaluation
-       + helpers
-       + preparation
-       + viewer
-     + gtFine
-       + train
-       + val
-       + test
-     + leftImg8bit
-       + train
-       + val
-       + test
+"""Converts custom dataset data to TFRecord file format with Example protos.
+The custom dataset is expected to have the following directory structure:
+  + glomImData
+     - build_customds.py (current working directiory).
+     + train
+       + images
+       + masks
+     + val
+       + images
+       + masks
+     + test
+       + images
+       + masks
      + tfrecord
 This script converts data into sharded data files and save at tfrecord folder.
-Note that before running this script, the users should (1) register the
-Cityscapes dataset website at https://www.cityscapes-dataset.com to
-download the dataset, and (2) run the script provided by Cityscapes
-`preparation/createTrainIdLabelImgs.py` to generate the training groundtruth.
-Also note that the tensorflow model will be trained with `TrainId' instead
-of `EvalId' used on the evaluation server. Thus, the users need to convert
-the predicted labels to `EvalId` for evaluation on the server. See the
-vis.py for more details.
 The Example proto contains the following fields:
   image/encoded: encoded image content.
   image/filename: image filename.
@@ -64,12 +54,13 @@ import sys
 import build_data
 from six.moves import range
 import tensorflow as tf
+import tifffile as tiff
 
 FLAGS = tf.app.flags.FLAGS
 
-tf.app.flags.DEFINE_string('cityscapes_root',
-                           './cityscapes',
-                           'Cityscapes dataset root folder.')
+tf.app.flags.DEFINE_string('customds_root',
+                           './glomImData',
+                           'customds root folder.')
 
 tf.app.flags.DEFINE_string(
     'output_dir',
@@ -77,18 +68,13 @@ tf.app.flags.DEFINE_string(
     'Path to save converted SSTable of TensorFlow examples.')
 
 
-_NUM_SHARDS = 10
+_NUM_SHARDS = 1
 
-# A map from data type to folder name that saves the data.
-_FOLDERS_MAP = {
-    'image': 'leftImg8bit',
-    'label': 'gtFine',
-}
 
 # A map from data type to filename postfix.
-_POSTFIX_MAP = {
-    'image': '_leftImg8bit',
-    'label': '_gtFine_labelTrainIds',
+_DATATYPE_MAP = {
+    'image': 'images',
+    'mask': 'masks',
 }
 
 # A map from data type to data format.
@@ -110,17 +96,17 @@ def _get_files(data, dataset_split):
     A list of sorted file names or None when getting label for
       test set.
   """
-  if dataset_split == 'train_fine':
+  if dataset_split == 'train':
     split_dir = 'train'
-  elif dataset_split == 'val_fine':
+  elif dataset_split == 'val':
     split_dir = 'val'
-  elif dataset_split == 'test_fine':
+  elif dataset_split == 'test':
     split_dir = 'test'
   else:
     raise RuntimeError("Split {} is not supported".format(dataset_split))
-  pattern = '*%s.%s' % (_POSTFIX_MAP[data], _DATA_FORMAT_MAP[data])
+    
   search_files = os.path.join(
-      FLAGS.cityscapes_root, _FOLDERS_MAP[data], split_dir, '*', pattern)
+      FLAGS.customds_root, split_dir,_DATATYPE_MAP[data], '*')
   filenames = glob.glob(search_files)
   return sorted(filenames)
 
@@ -133,6 +119,7 @@ def _convert_dataset(dataset_split):
     RuntimeError: If loaded image and label have different shape, or if the
       image file with specified postfix could not be found.
   """
+  
   image_files = _get_files('image', dataset_split)
   label_files = _get_files('label', dataset_split)
 
@@ -146,6 +133,7 @@ def _convert_dataset(dataset_split):
   image_reader = build_data.ImageReader('png', channels=3)
   label_reader = build_data.ImageReader('png', channels=1)
 
+  
   for shard_id in range(_NUM_SHARDS):
     shard_filename = '%s-%05d-of-%05d.tfrecord' % (
         dataset_split, shard_id, _NUM_SHARDS)
