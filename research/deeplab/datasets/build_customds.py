@@ -84,9 +84,6 @@ _DATA_FORMAT_MAP = {
     'label': 'png',
 }
 
-# Image file pattern.
-_IMAGE_FILENAME_RE = re.compile('(.+)' + _POSTFIX_MAP['image'])
-
 
 def _get_files(data, dataset_split):
   """Gets files for the specified data type and dataset split.
@@ -155,12 +152,8 @@ def _convert_dataset(dataset_split):
         if height != seg_height or width != seg_width:
           raise RuntimeError('Shape mismatched between image and label.')
         # Convert to tf example.
-        re_match = _IMAGE_FILENAME_RE.search(image_files[i])
-        if re_match is None:
-          raise RuntimeError('Invalid image filename: ' + image_files[i])
-        filename = os.path.basename(re_match.group(1))
         example = build_data.image_seg_to_tfexample(
-            image_data, filename, height, width, seg_data)
+            image_data, filenames[i], height, width, seg_data)
         tfrecord_writer.write(example.SerializeToString())
     sys.stdout.write('\n')
     sys.stdout.flush()
