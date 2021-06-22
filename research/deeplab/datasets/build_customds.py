@@ -130,7 +130,7 @@ def _convert_dataset(dataset_split):
   if num_images != num_labels:
     raise RuntimeError("The number of images and labels doesn't match: {} {}".format(num_images, num_labels))
 
-  image_reader = build_data.ImageReader('png', channels=3)
+  image_reader = build_data.ImageReader('png', channels=1)
   label_reader = build_data.ImageReader('png', channels=1)
 
   
