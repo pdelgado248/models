@@ -21,7 +21,7 @@
 """Converts custom dataset data to TFRecord file format with Example protos.
 The custom dataset is expected to have the following directory structure:
   + glomImData
-     - build_customds.py (current working directiory).
+     - build_customds.py (current working directory).
      + train
        + images
        + masks
