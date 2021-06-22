@@ -81,17 +81,17 @@ _DATATYPE_MAP = {
 # A map from data type to data format.
 _DATA_FORMAT_MAP = {
     'image': 'png',
-    'label': 'png',
+    'mask': 'png',
 }
 
 
 def _get_files(data, dataset_split):
   """Gets files for the specified data type and dataset split.
   Args:
-    data: String, desired data ('image' or 'label').
+    data: String, desired data ('image' or 'mask').
     dataset_split: String, dataset split ('train_fine', 'val_fine', 'test_fine')
   Returns:
-    A list of sorted file names or None when getting label for
+    A list of sorted file names or None when getting mask for
       test set.
   """
   if dataset_split == 'train':
@@ -114,19 +114,19 @@ def _convert_dataset(dataset_split):
   Args:
     dataset_split: The dataset split (e.g., train_fine, val_fine).
   Raises:
-    RuntimeError: If loaded image and label have different shape, or if the
+    RuntimeError: If loaded image and mask have different shape, or if the
       image file with specified postfix could not be found.
   """
   
   image_files = _get_files('image', dataset_split)
-  label_files = _get_files('label', dataset_split)
+  label_files = _get_files('mask', dataset_split)
 
   num_images = len(image_files)
   num_labels = len(label_files)
   num_per_shard = int(math.ceil(num_images / _NUM_SHARDS))
 
   if num_images != num_labels:
-    raise RuntimeError("The number of images and labels doesn't match: {} {}".format(num_images, num_labels))
+    raise RuntimeError("The number of images and masks doesn't match: {} {}".format(num_images, num_labels))
 
   image_reader = build_data.ImageReader('png', channels=1)
   label_reader = build_data.ImageReader('png', channels=1)
