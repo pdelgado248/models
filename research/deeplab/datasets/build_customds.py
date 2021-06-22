@@ -161,7 +161,7 @@ def _convert_dataset(dataset_split):
 
 def main(unused_argv):
   # Only support converting 'train_fine', 'val_fine' and 'test_fine' sets for now.
-  for dataset_split in ['train_fine', 'val_fine', 'test_fine']:
+  for dataset_split in ['train', 'val', 'test']:
     _convert_dataset(dataset_split)
 
 
