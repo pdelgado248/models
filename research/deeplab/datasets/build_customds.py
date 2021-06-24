@@ -14,7 +14,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Converts ADE20K data to TFRecord file format with Example protos."""
+"""Converts glomImData_png data to TFRecord file format with Example protos."""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -31,32 +31,32 @@ FLAGS = tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_string(
     'train_image_folder',
-    './ADE20K/ADEChallengeData2016/images/training',
+    './glomImData_png/images/training',
     'Folder containing trainng images')
 tf.app.flags.DEFINE_string(
     'train_image_label_folder',
-    './ADE20K/ADEChallengeData2016/annotations/training',
+    './glomImData_png/annotations/training',
     'Folder containing annotations for trainng images')
 
 tf.app.flags.DEFINE_string(
     'val_image_folder',
-    './ADE20K/ADEChallengeData2016/images/validation',
+    './glomImData_png/images/validation',
     'Folder containing validation images')
 
 tf.app.flags.DEFINE_string(
     'val_image_label_folder',
-    './ADE20K/ADEChallengeData2016/annotations/validation',
+    './glomImData_png/annotations/validation',
     'Folder containing annotations for validation')
 
 tf.app.flags.DEFINE_string(
-    'output_dir', './ADE20K/tfrecord',
+    'output_dir', './glomImData_png/tfrecord',
     'Path to save converted tfrecord of Tensorflow example')
 
 _NUM_SHARDS = 4
 
 
 def _convert_dataset(dataset_split, dataset_dir, dataset_label_dir):
-  """Converts the ADE20k dataset into into tfrecord format.
+  """Converts the glomImData_png dataset into into tfrecord format.
   Args:
     dataset_split: Dataset split (e.g., train, val).
     dataset_dir: Dir in which the dataset locates.
@@ -65,7 +65,7 @@ def _convert_dataset(dataset_split, dataset_dir, dataset_label_dir):
     RuntimeError: If loaded image and label have different shape.
   """
 
-  img_names = tf.gfile.Glob(os.path.join(dataset_dir, '*.jpg'))
+  img_names = tf.gfile.Glob(os.path.join(dataset_dir, '*.png'))
   random.shuffle(img_names)
   seg_names = []
   for f in img_names:
