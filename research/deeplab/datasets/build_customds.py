@@ -49,10 +49,20 @@ tf.app.flags.DEFINE_string(
     'Folder containing annotations for validation')
 
 tf.app.flags.DEFINE_string(
+    'test_image_folder',
+    './glomImData_png/images/test',
+    'Folder containing test images')
+
+tf.app.flags.DEFINE_string(
+    'test_image_label_folder',
+    './glomImData_png/annotations/test',
+    'Folder containing annotations for test')
+
+tf.app.flags.DEFINE_string(
     'output_dir', './glomImData_png/tfrecord',
     'Path to save converted tfrecord of Tensorflow example')
 
-_NUM_SHARDS = 4
+_NUM_SHARDS = 1
 
 
 def _convert_dataset(dataset_split, dataset_dir, dataset_label_dir):
@@ -115,6 +125,7 @@ def main(unused_argv):
   _convert_dataset(
       'train', FLAGS.train_image_folder, FLAGS.train_image_label_folder)
   _convert_dataset('val', FLAGS.val_image_folder, FLAGS.val_image_label_folder)
+  _convert_dataset('test', FLAGS.test_image_folder, FLAGS.test_image_label_folder)
 
 
 if __name__ == '__main__':
