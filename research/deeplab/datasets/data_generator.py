@@ -107,7 +107,7 @@ _CUSTOMDS_INFORMATION = DatasetDescriptor(
         'test': 20,
     },
     num_classes=2,
-    ignore_label=0,
+    ignore_label=255,
 )
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
