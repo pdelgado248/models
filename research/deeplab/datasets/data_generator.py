@@ -102,7 +102,7 @@ _ADE20K_INFORMATION = DatasetDescriptor(
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 _CUSTOMDS_INFORMATION = DatasetDescriptor(
     splits_to_sizes={
-        'train': 80,  # num of samples in images/training
+        'train': 60,  # num of samples in images/training
         'val': 20,  # num of samples in images/validation
         'test': 20,
     },
