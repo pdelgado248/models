@@ -173,11 +173,14 @@ def _process_batch(sess, original_images, semantic_predictions, image_names,
         original_image, save_dir, _IMAGE_FORMAT % (image_id_offset + i),
         add_colormap=False)
 
+    #~~~~~~~~~~~~~~~~~~~Changed add_colormap to False~~~~~~~~
     # Save prediction.
     save_annotation.save_annotation(
         crop_semantic_prediction, save_dir,
-        _PREDICTION_FORMAT % (image_id_offset + i), add_colormap=True,
+        _PREDICTION_FORMAT % (image_id_offset + i), add_colormap=False,
         colormap_type=FLAGS.colormap_type)
+    
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     if FLAGS.also_save_raw_predictions:
       image_filename = os.path.basename(image_names[i])
